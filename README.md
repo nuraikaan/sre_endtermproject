@@ -17,8 +17,9 @@ This project demonstrates the integration of modern DevOps practices, combining 
 6. Docker Compose -> Container orchestration 
 7. Prometheus -> Metrics collection 
 8. Grafana -> Metrics visualization 
-9. Terraform -> Infrastructure as Code 
-
+9. Terraform -> Infrastructure as Code
+10. Kubernetes -> Container orchestration, automated deployment
+11. Ansible -> Configuration management, automated server provisioning
 ---
 
 ### Microservices
@@ -26,7 +27,8 @@ This project demonstrates the integration of modern DevOps practices, combining 
 2. Order Service -> 3002 -> Orders, shopping cart, favorites 
 3. Product Service -> 3003 -> Product catalog management 
 4. User Service -> 3004 -> User profile management 
-5. Chat Service -> 3005 -> Messaging between users 
+5. Chat Service -> 3005 -> Messaging between users
+6. Payment Service -> 3006 -> Payment processing
 
 ### Step 1 — Configure environment variables
 Create `.env` file in the root directory:
