@@ -1,0 +1,95 @@
+---
+- name: Configure and Deploy SRE Infrastructure on macOS
+  hosts: all
+  gather_facts: yes
+
+  vars:
+    app_dir: /Users/nuraitermezbek/webbackendfinal
+
+  tasks:
+
+    - name: Check Homebrew installation
+      command: brew --version
+      register: brew_check
+      changed_when: false
+
+    - name: Show Homebrew version
+      debug:
+        var: brew_check.stdout
+
+    - name: Check Docker installation
+      command: docker --version
+      register: docker_check
+      changed_when: false
+
+    - name: Show Docker version
+      debug:
+        var: docker_check.stdout
+
+    - name: Check Docker Compose installation
+      command: docker-compose --version
+      register: compose_check
+      changed_when: false
+
+    - name: Show Docker Compose version
+      debug:
+        var: compose_check.stdout
+
+    - name: Check kubectl installation
+      command: kubectl version --client
+      register: kubectl_check
+      changed_when: false
+
+    - name: Show kubectl version
+      debug:
+        var: kubectl_check.stdout
+
+    - name: Check Minikube installation
+      command: minikube version
+      register: minikube_check
+      changed_when: false
+
+    - name: Show Minikube version
+      debug:
+        var: minikube_check.stdout
+
+    - name: Check Docker Compose services
+      command: docker-compose ps
+      args:
+        chdir: "{{ app_dir }}"
+      register: deployment_status
+      changed_when: false
+
+    - name: Show deployed services
+      debug:
+        var: deployment_status.stdout_lines
+
+    - name: Check Kubernetes pods
+      command: kubectl get pods -n microservices
+      register: pod_status
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Show pod status
+      debug:
+        var: pod_status.stdout_lines
+
+    - name: Check Kubernetes services
+      command: kubectl get services -n microservices
+      register: service_status
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Show Kubernetes services
+      debug:
+        var: service_status.stdout_lines
+
+    - name: Check HPA status
+      command: kubectl get hpa -n microservices
+      register: hpa_status
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Show HPA status
+      debug:
+        var: hpa_status.stdout_lines

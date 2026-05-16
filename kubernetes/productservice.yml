@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productservice
+  namespace: microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: productservice
+  template:
+    metadata:
+      labels:
+        app: productservice
+    spec:
+      containers:
+        - name: productservice
+          image: webbackendfinal-productservice:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3003
+          envFrom:
+            - secretRef:
+                name: app-secret
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3003
+            initialDelaySeconds: 15
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: productservice
+  namespace: microservices
+spec:
+  selector:
+    app: productservice
+  ports:
+    - port: 3003
+      targetPort: 3003
+  type: NodePort

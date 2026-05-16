@@ -1,0 +1,34 @@
+global:
+  scrape_interval: 15s
+
+rule_files:
+  - "alert_rules.yml"
+
+scrape_configs:
+  - job_name: 'authservice'
+    static_configs:
+      - targets: ['authservice:3001']
+
+  - job_name: 'orderservice'
+    static_configs:
+      - targets: ['orderservice:3002']
+
+  - job_name: 'productservice'
+    static_configs:
+      - targets: ['productservice:3003']
+
+  - job_name: 'userservice'
+    static_configs:
+      - targets: ['userservice:3004']
+
+  - job_name: 'chatservice'
+    static_configs:
+      - targets: ['chatservice:3005']
+
+  - job_name: 'paymentservice'
+    static_configs:
+      - targets: ['paymentservice:3006']
+
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
