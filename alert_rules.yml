@@ -1,0 +1,52 @@
+groups:
+ 
+  - name: service_downtime
+    rules:
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.job }} is DOWN"
+          description: "{{ $labels.job }} has been unreachable for more than 1 minute."
+ 
+  - name: cpu_usage
+    rules:
+      - alert: HighCpuUsage
+        expr: |
+          100 - (avg by(instance)(
+            rate(node_cpu_seconds_total{mode="idle"}[5m])
+          ) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU on {{ $labels.instance }}"
+          description: "CPU usage is above 80%."
+ 
+      - alert: CriticalCpuUsage
+        expr: |
+          100 - (avg by(instance)(
+            rate(node_cpu_seconds_total{mode="idle"}[5m])
+          ) * 100) > 95
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "CRITICAL CPU on {{ $labels.instance }}"
+          description: "CPU usage is above 95%. Scale immediately."
+ 
+  - name: error_rates
+    rules:
+      - alert: HighHttpErrorRate
+        expr: |
+          rate(http_requests_total{status=~"5.."}[5m])
+          / rate(http_requests_total[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate on {{ $labels.job }}"
+          description: "Error rate is above 5%."
+ 

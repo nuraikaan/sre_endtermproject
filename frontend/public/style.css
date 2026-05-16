@@ -1,0 +1,82 @@
+:root {
+  --pink: #ff377a;
+  --dark: #111;
+  --light: #f8f9fa;
+  --gray: #6c757d;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--light);
+  color: var(--dark);
+}
+
+.navbar-brand {
+  color: var(--pink) !important;
+  font-weight: 700;
+}
+
+.btn-pink {
+  background: var(--pink);
+  color: white;
+  border: none;
+}
+
+.btn-pink:hover {
+  background: #b91c4a;
+}
+
+.card-img-top {
+  height: 220px;
+  object-fit: cover;
+}
+
+.banner-card {
+  height: 420px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.banner-content {
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+  color: white;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+}
+
+.text-pink { color: var(--pink) !important; }
+
+.form-container {
+      max-width: 420px;
+      margin: 80px auto;
+      padding: 40px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .brand-title {
+      color: #d81e5b;
+      font-weight: 700;
+      font-size: 2.1rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .btn-register {
+      background: #d81e5b;
+      border: none;
+      padding: 12px;
+      font-size: 1.05rem;
+    }
+    .btn-register:hover {
+      background: #b91c4a;
+    }
+    .login-link {
+      color: #d81e5b;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .login-link:hover {
+      text-decoration: underline;
+    }

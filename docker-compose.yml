@@ -1,0 +1,413 @@
+
+services:
+  postgres:
+    image: postgres:15
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - authservice
+      - orderservice
+      - productservice
+      - userservice
+      - chatservice
+      - paymentservice
+    networks:
+      - app-network
+
+  authservice:
+    build: ./services/authservice
+    ports:
+      - "3001:3001"
+    env_file: .env
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3001/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  orderservice:
+    build: ./services/orderservice
+    ports:
+      - "3002:3002"
+    env_file: .env
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3002/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  productservice:
+    build: ./services/productservice
+    ports:
+      - "3003:3003"
+    env_file: .env
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3003/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  userservice:
+    build: ./services/userservice
+    ports:
+      - "3004:3004"
+    env_file: .env
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3004/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  chatservice:
+    build: ./services/chatservice
+    ports:
+      - "3005:3005"
+    env_file: .env
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3005/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+
+  paymentservice:
+    build: ./services/paymentservice
+    ports:
+      - "3006:3006"
+    env_file: .env
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3006/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9092:9090"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alert_rules.yml:/etc/prometheus/alert_rules.yml
+    networks:
+      - app-network
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3010:3000"
+    env_file:
+      - .env
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - app-network
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - "9103:9100"
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+  grafana_data:
+
+networks:
+  app-network:
+    driver: bridge 
+
+
+# version: "3.9"
+
+# services:
+#   postgres:
+#     image: postgres:15
+#     env_file: .env
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     networks:
+#       - app-network
+#     deploy:
+#       replicas: 1
+#       restart_policy:
+#         condition: on-failure
+
+#   authservice:
+#     image: webbackendfinal-authservice:latest
+#     ports:
+#       - "3001:3001"
+#     env_file: .env
+#     depends_on:
+#       - postgres
+#     networks:
+#       - app-network
+#     deploy:
+#       replicas: 2
+#       restart_policy:
+#         condition: on-failure
+#       update_config:
+#         parallelism: 1
+#         delay: 10s
+
+#   orderservice:
+#     image: webbackendfinal-orderservice:latest
+#     ports:
+#       - "3002:3002"
+#     env_file: .env
+#     networks:
+#       - app-network
+#     deploy:
+#       replicas: 2
+#       restart_policy:
+#         condition: on-failure
+
+#   productservice:
+#     image: webbackendfinal-productservice:latest
+#     ports:
+#       - "3003:3003"
+#     env_file: .env
+#     networks:
+#       - app-network
+#     deploy:
+#       replicas: 1
+#       restart_policy:
+#         condition: on-failure
+
+#   userservice:
+#     image: webbackendfinal-userservice:latest
+#     ports:
+#       - "3004:3004"
+#     env_file: .env
+#     networks:
+#       - app-network
+#     deploy:
+#       replicas: 1
+#       restart_policy:
+#         condition: on-failure
+
+#   chatservice:
+#     image: webbackendfinal-chatservice:latest
+#     ports:
+#       - "3005:3005"
+#     env_file: .env
+#     networks:
+#       - app-network
+#     deploy:
+#       replicas: 1
+#       restart_policy:
+#         condition: on-failure
+
+#   paymentservice:
+#     image: webbackendfinal-paymentservice:latest
+#     ports:
+#       - "3006:3006"
+#     env_file: .env
+#     networks:
+#       - app-network
+#     deploy:
+#       replicas: 2
+#       restart_policy:
+#         condition: on-failure
+
+#   prometheus:
+#     image: prom/prometheus:latest
+#     ports:
+#       - "9092:9090"
+#     volumes:
+#       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+#       - ./alert_rules.yml:/etc/prometheus/alert_rules.yml
+#     networks:
+#       - app-network
+#     deploy:
+#       replicas: 1
+
+#   grafana:
+#     image: grafana/grafana:latest
+#     ports:
+#       - "3010:3000"
+#     env_file: .env
+#     networks:
+#       - app-network
+#     deploy:
+#       replicas: 1
+
+#   node-exporter:
+#     image: prom/node-exporter:latest
+#     ports:
+#       - "9103:9100"docker stack services app
+#     networks:
+#       - app-network
+#     deploy:
+#       mode: global
+
+# volumes:
+#   postgres_data:
+
+# networks:
+#   app-network:
+#     driver: overlay
+
+# version: "3.8"
+
+# services:
+#   postgres:
+#     image: postgres:15
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: postgres123
+#       POSTGRES_DB: myapp
+#     networks:
+#       - app-network
+
+#   frontend:
+#     image: frontend:latest
+#     ports:
+#       - "8081:80"
+#     networks:
+#       - app-network
+
+#   authservice:
+#     image: authservice:latest
+#     ports:
+#       - "3001:3001"
+#     environment:
+#       DATABASE_URL: postgresql://postgres:postgres123@myapp_postgres:5432/myapp
+#       JWT_SECRET: supersecret123
+#       ADMIN_CODE: admin123
+#     networks:
+#       - app-network
+
+#   orderservice:
+#     image: orderservice:latest
+#     ports:
+#       - "3002:3002"
+#     environment:
+#       DATABASE_URL: postgresql://postgres:postgres123@myapp_postgres:5432/myapp
+#       JWT_SECRET: supersecret123
+#     networks:
+#       - app-network
+
+#   productservice:
+#     image: productservice:latest
+#     ports:
+#       - "3003:3003"
+#     environment:
+#       DATABASE_URL: postgresql://postgres:postgres123@myapp_postgres:5432/myapp
+#       JWT_SECRET: supersecret123
+#     networks:
+#       - app-network
+
+#   userservice:
+#     image: userservice:latest
+#     ports:
+#       - "3004:3004"
+#     environment:
+#       DATABASE_URL: postgresql://postgres:postgres123@myapp_postgres:5432/myapp
+#       JWT_SECRET: supersecret123
+#     networks:
+#       - app-network
+
+#   chatservice:
+#     image: chatservice:latest
+#     ports:
+#       - "3005:3005"
+#     environment:
+#       DATABASE_URL: postgresql://postgres:postgres123@myapp_postgres:5432/myapp
+#       JWT_SECRET: supersecret123
+#     networks:
+#       - app-network
+
+#   paymentservice:
+#     image: paymentservice:latest
+#     ports:
+#       - "3006:3006"
+#     environment:
+#       DATABASE_URL: postgresql://postgres:postgres123@myapp_postgres:5432/myapp
+#       JWT_SECRET: supersecret123
+#     networks:
+#       - app-network
+
+#   prometheus:
+#     image: prom/prometheus:latest
+#     ports:
+#       - "9092:9090"
+#     command:
+#       - "--config.file=/etc/prometheus/prometheus.yml"
+#     configs:
+#       - source: prometheus_config
+#         target: /etc/prometheus/prometheus.yml
+#       - source: alert_rules
+#         target: /etc/prometheus/alert_rules.yml
+#     networks:
+#       - app-network
+
+#   grafana:
+#     image: grafana/grafana:latest
+#     ports:
+#       - "3010:3000"
+#     environment:
+#       GF_SECURITY_ADMIN_USER: admin
+#       GF_SECURITY_ADMIN_PASSWORD: admin
+#     networks:
+#       - app-network
+
+#   node-exporter:
+#     image: prom/node-exporter:latest
+#     ports:
+#       - "9103:9100"
+#     networks:
+#       - app-network
+
+# configs:
+#   prometheus_config:
+#     file: ./prometheus.yml
+#   alert_rules:
+#     file: ./alert_rules.yml
+
+# networks:
+#   app-network:
+#     driver: overlay
